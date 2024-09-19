@@ -1,0 +1,103 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
+contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
+    using SafeERC20 for IERC20;
+
+    event ClaimRewards(address indexed recipient, uint256 claimedAmount);
+    address internal constant REWARDS_SIGNER = 0xD23430aA3546c245c03eC1d3a2ab5D80CD98607E;
+    address public constant USDT_ADDRESS = 0xED85184DC4BECf731358B2C63DE971856623e056;
+    IERC20 USDT_ERC20 = IERC20(USDT_ADDRESS);
+
+    bytes32 MINT_RICH_DOMAIN_SEPARATOR;
+
+    mapping(address => uint256) public rewardsClaimed;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize() external initializer {
+        __ReentrancyGuard_init();
+        MINT_RICH_DOMAIN_SEPARATOR = _computeDomainSeparator();
+    }
+
+    function claimRewards(
+        uint256 totalRewards,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) external nonReentrant {
+        address payable recipient = payable(msg.sender);
+        require(_verfySigner(recipient, totalRewards, _v, _r, _s) == REWARDS_SIGNER, "Invalid signer");
+        require(totalRewards > rewardsClaimed[recipient], "Nothing to claim");
+
+        uint256 toClaim = totalRewards - rewardsClaimed[recipient];
+        require(USDT_ERC20.balanceOf(address(this)) >= toClaim, "Insufficient USDT balance");
+        require(USDT_ERC20.allowance(address(this), recipient) >= toClaim, "Allowance not set for USDT"); //??
+        rewardsClaimed[recipient] = totalRewards;
+
+        emit ClaimRewards(recipient, toClaim);
+        USDT_ERC20.safeTransferFrom(
+            address(this),
+            recipient,
+            toClaim
+        );
+    }
+
+    function _verfySigner(
+        address recipient,
+        uint256 totalRewards,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) internal view returns (address _signer) {
+        _signer = ECDSA.recover(
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    MINT_RICH_DOMAIN_SEPARATOR,
+                    keccak256(
+                        abi.encode(
+                            keccak256("MintRichRewards(address recipient,uint256 totalRewards)"),
+                            recipient,
+                            totalRewards
+                        )
+                    )
+                )
+            ), _v, _r, _s
+        );
+    }
+
+    function _computeDomainSeparator() internal view returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    keccak256(
+                        "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+                    ),
+                    keccak256(bytes("MintAvatarContract")),
+                    keccak256("1"),
+                    block.chainid,
+                    address(this)
+                )
+            );
+    }
+
+}
