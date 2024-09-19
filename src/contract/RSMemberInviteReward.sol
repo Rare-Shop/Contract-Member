@@ -16,7 +16,7 @@ import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
+contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable,OwnableUpgradeable,UUPSUpgradeable {
     using SafeERC20 for IERC20;
 
     event ClaimRewards(address indexed recipient, uint256 claimedAmount);
@@ -24,7 +24,7 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
     address public constant USDT_ADDRESS = 0xED85184DC4BECf731358B2C63DE971856623e056;
     IERC20 USDT_ERC20 = IERC20(USDT_ADDRESS);
 
-    bytes32 MINT_RICH_DOMAIN_SEPARATOR;
+    bytes32 DOMAIN_SEPARATOR;
 
     mapping(address => uint256) public rewardsClaimed;
 
@@ -33,9 +33,11 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
         _disableInitializers();
     }
 
-    function initialize() external initializer {
+    function initialize(address initialOwner) external initializer {
+        __Ownable_init(initialOwner);
+        __UUPSUpgradeable_init();
         __ReentrancyGuard_init();
-        MINT_RICH_DOMAIN_SEPARATOR = _computeDomainSeparator();
+        DOMAIN_SEPARATOR = _computeDomainSeparator();
     }
 
     function claimRewards(
@@ -50,7 +52,6 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
 
         uint256 toClaim = totalRewards - rewardsClaimed[recipient];
         require(USDT_ERC20.balanceOf(address(this)) >= toClaim, "Insufficient USDT balance");
-        require(USDT_ERC20.allowance(address(this), recipient) >= toClaim, "Allowance not set for USDT"); //??
         rewardsClaimed[recipient] = totalRewards;
 
         emit ClaimRewards(recipient, toClaim);
@@ -72,7 +73,7 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
             keccak256(
                 abi.encodePacked(
                     "\x19\x01",
-                    MINT_RICH_DOMAIN_SEPARATOR,
+                    DOMAIN_SEPARATOR,
                     keccak256(
                         abi.encode(
                             keccak256("MintRichRewards(address recipient,uint256 totalRewards)"),
@@ -92,7 +93,7 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
                     keccak256(
                         "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
                     ),
-                    keccak256(bytes("MintAvatarContract")),
+                    keccak256(bytes("RSMemberInviteRewardContract")),
                     keccak256("1"),
                     block.chainid,
                     address(this)
@@ -100,4 +101,5 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable {
             );
     }
 
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }
