@@ -32,7 +32,7 @@ contract RareShopSBT is
     }
 
     function initialize(address initialOwner) external initializer {
-        __ERC721_init("Safe Growth SBT", "SBT");
+        __ERC721_init("RareShop SBT", "RS");
         __Ownable_init(initialOwner);
         __UUPSUpgradeable_init();
     }
