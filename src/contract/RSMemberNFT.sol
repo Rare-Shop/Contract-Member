@@ -55,9 +55,10 @@ contract RSMemberNFT is
         signer = _signer;
     }
 
-    function mint(address to, uint256 tokenId) external onlySigner {
+    function mint(address to, uint256 tokenId) external onlySigner returns (uint256) {
         require(balanceOf(to) == 0, "SBT: one address can only own one token");
         _mint(to, tokenId);
+        return tokenId;
     }
 
     function mintBatch(address[] calldata addressList) external onlySigner {

@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 import "forge-std/console.sol";
 import "forge-std/Script.sol";
-import "../src/contract/MintAvatarContract.sol";
+import "../src/contract/RSMemberInviteReward.sol";
 import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 
-contract MintAvatarContractScript is Script {
+contract RSMemberInviteRewardScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
@@ -14,14 +14,14 @@ contract MintAvatarContractScript is Script {
         address owner = vm.envAddress("OWNER");
 
         address uupsProxy =
-            Upgrades.deployUUPSProxy("MintAvatarContract.sol", abi.encodeCall(MintAvatarContract.initialize, (owner)));
+            Upgrades.deployUUPSProxy("RSMemberInviteReward.sol", abi.encodeCall(RSMemberInviteReward.initialize, (owner)));
 
         console.log("uupsProxy deploy at %s", uupsProxy);
 
         // contract upgrade
         // Upgrades.upgradeProxy(
         //     0x57aA394Cd408c1dB3E0De979e649e82BF8dD395F,
-        //     "MintAvatarContract.sol",
+        //     "RSMemberInviteReward.sol",
         //     ""
         // );
 
