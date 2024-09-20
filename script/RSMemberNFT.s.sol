@@ -20,9 +20,9 @@ contract RSMemberNFTScript is Script {
 
         // contract upgrade
         // Upgrades.upgradeProxy(
-        //     0x57aA394Cd408c1dB3E0De979e649e82BF8dD395F,
-        //     "RSMemberNFT.sol",
-        //     ""
+            // 0xc580E034288517CdC99B807E5dcdf6cC1b27181d,//代理地址
+            // "RSMemberNFT.sol",
+            // ""
         // );
 
         vm.stopBroadcast();

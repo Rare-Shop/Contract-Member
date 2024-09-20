@@ -28,13 +28,13 @@ contract TestRSMemberNFTt is Test {
         console.log("impl proxy -> %s", implAddressV1);
     }
 
-    function testMint() public {
-        console.log("testMint");
-        vm.startPrank(OWNER_ADDRESS);
-        address mintUser = 0xC565FC29F6df239Fe3848dB82656F2502286E97d;
-        instance.setSigner(OWNER_ADDRESS);
-        uint256 ret = instance.mint(mintUser, 1);
-        assertEq(ret, 1, string.concat("tokenId != 1, ", Strings.toString(ret)));
-        vm.stopPrank();
-    }
+    // function testMint() public {
+        // console.log("testMint");
+        // vm.startPrank(OWNER_ADDRESS);
+        // address mintUser = 0xC565FC29F6df239Fe3848dB82656F2502286E97d;
+        // instance.setSigner(OWNER_ADDRESS);
+        // uint256 ret = instance.mint(mintUser, 1);
+        // assertEq(ret, 1, string.concat("tokenId != 1, ", Strings.toString(ret)));
+        // vm.stopPrank();
+    // }
 }
