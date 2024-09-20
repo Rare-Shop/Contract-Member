@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 import "forge-std/console.sol";
 import "forge-std/Script.sol";
-import "../src/contract/RSMemberInviteReward.sol";
+import "../src/contract/RareShopInviteRewards.sol";
 import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 
-contract RSMemberInviteRewardScript is Script {
+contract RareShopInviteRewardsScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
@@ -14,7 +14,7 @@ contract RSMemberInviteRewardScript is Script {
         address owner = vm.envAddress("OWNER");
 
         address uupsProxy =
-            Upgrades.deployUUPSProxy("RSMemberInviteReward.sol", abi.encodeCall(RSMemberInviteReward.initialize, (owner)));
+            Upgrades.deployUUPSProxy("RareShopInviteRewards.sol", abi.encodeCall(RareShopInviteRewards.initialize, (owner)));
 
         console.log("uupsProxy deploy at %s", uupsProxy);
 

@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 import "forge-std/console.sol";
 import "forge-std/Script.sol";
-import "../src/contract/RSMemberNFT.sol";
+import "../src/contract/RareShopSBT.sol";
 import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 
-contract RSMemberNFTScript is Script {
+contract RareShopSBTScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
@@ -14,7 +14,7 @@ contract RSMemberNFTScript is Script {
         address owner = vm.envAddress("OWNER");
 
         address uupsProxy =
-            Upgrades.deployUUPSProxy("RSMemberNFT.sol", abi.encodeCall(RSMemberNFT.initialize, (owner)));
+            Upgrades.deployUUPSProxy("RareShopSBT.sol", abi.encodeCall(RareShopSBT.initialize, (owner)));
 
         console.log("uupsProxy deploy at %s", uupsProxy);
 
