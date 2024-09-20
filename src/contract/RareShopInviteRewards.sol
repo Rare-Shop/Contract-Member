@@ -16,7 +16,7 @@ import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable,OwnableUpgradeable,UUPSUpgradeable {
+contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,UUPSUpgradeable {
     using SafeERC20 for IERC20;
 
     event ClaimRewards(address indexed recipient, uint256 claimedAmount);
@@ -76,7 +76,7 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable,OwnableUpgra
                     DOMAIN_SEPARATOR,
                     keccak256(
                         abi.encode(
-                            keccak256("MintRichRewards(address recipient,uint256 totalRewards)"),
+                            keccak256("RareShopInviteRewards(address recipient,uint256 totalRewards)"),
                             recipient,
                             totalRewards
                         )
@@ -93,7 +93,7 @@ contract RSMemberInviteRewardContract is ReentrancyGuardUpgradeable,OwnableUpgra
                     keccak256(
                         "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
                     ),
-                    keccak256(bytes("RSMemberInviteRewardContract")),
+                    keccak256(bytes("RareShopInviteRewards")),
                     keccak256("1"),
                     block.chainid,
                     address(this)

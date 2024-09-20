@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
-contract RSMemberNFT is
+contract RareShopSBT is
     Initializable,
     ERC721Upgradeable,
     OwnableUpgradeable,
