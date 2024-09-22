@@ -23,7 +23,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
     event ClaimRewards(address indexed recipient, uint256 claimedAmount);
     address internal constant REWARDS_SIGNER = 0xA6Ec99f3B80229222d5CB457370E36a3870edb06;
     address public constant USDT_ADDRESS = 0xED85184DC4BECf731358B2C63DE971856623e056;
-    IERC20 USDT_ERC20 = IERC20(USDT_ADDRESS);
+    IERC20 USDT_ERC20;
 
     bytes32 DOMAIN_SEPARATOR;
 
@@ -39,6 +39,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
         __UUPSUpgradeable_init();
         __ReentrancyGuard_init();
         DOMAIN_SEPARATOR = _computeDomainSeparator();
+        USDT_ERC20 = IERC20(USDT_ADDRESS);
     }
 
     function claimRewards(
