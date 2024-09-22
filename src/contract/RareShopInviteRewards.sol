@@ -21,7 +21,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
     using SafeERC20 for IERC20;
 
     event ClaimRewards(address indexed recipient, uint256 claimedAmount);
-    address internal constant REWARDS_SIGNER = 0xD23430aA3546c245c03eC1d3a2ab5D80CD98607E;
+    address internal constant REWARDS_SIGNER = 0xA6Ec99f3B80229222d5CB457370E36a3870edb06;
     address public constant USDT_ADDRESS = 0xED85184DC4BECf731358B2C63DE971856623e056;
     IERC20 USDT_ERC20 = IERC20(USDT_ADDRESS);
 
