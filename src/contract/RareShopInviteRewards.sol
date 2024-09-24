@@ -76,6 +76,19 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
         );
     }
 
+    function withdraw(address to) external onlyOwner {
+        require(USDT_ERC20.balanceOf(address(this)) > 0, "USDT balance is 0");
+
+        address payable recipient = payable(to);
+        uint256 balance = USDT_ERC20.balanceOf(address(this));
+        emit ClaimRewards(recipient, balance);
+
+        USDT_ERC20.safeTransfer(
+            recipient,
+            balance
+        );
+    }
+
     function _verfySigner(
         address recipient,
         uint256 totalRewards,
