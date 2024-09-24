@@ -70,8 +70,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
         rewardsClaimed[recipient] = totalRewards;
 
         emit ClaimRewards(recipient, toClaim);
-        USDT_ERC20.safeTransferFrom(
-            address(this),
+        USDT_ERC20.safeTransfer(
             recipient,
             toClaim
         );
