@@ -20,10 +20,15 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
 
     using SafeERC20 for IERC20;
 
+    error SignerUnauthorizedAccount(address account);
+
     event ClaimRewards(address indexed recipient, uint256 claimedAmount);
-    address internal constant REWARDS_SIGNER = 0xA6Ec99f3B80229222d5CB457370E36a3870edb06;
+
     address public constant USDT_ADDRESS = 0xED85184DC4BECf731358B2C63DE971856623e056;
+
     IERC20 USDT_ERC20;
+
+    address internal signer;
 
     bytes32 DOMAIN_SEPARATOR;
 
@@ -42,6 +47,14 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
         USDT_ERC20 = IERC20(USDT_ADDRESS);
     }
 
+    function setSigner(address _signer) external onlyOwner {
+        require(
+            _signer != address(0),
+            "The input parameters of the address type must not be zero address."
+        );
+        signer = _signer;
+    }
+
     function claimRewards(
         uint256 totalRewards,
         uint8 _v,
@@ -49,7 +62,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
         bytes32 _s
     ) external nonReentrant {
         address payable recipient = payable(msg.sender);
-        require(_verfySigner(recipient, totalRewards, _v, _r, _s) == REWARDS_SIGNER, "Invalid signer");
+        require(_verfySigner(recipient, totalRewards, _v, _r, _s) == signer, "Invalid signer");
         require(totalRewards > rewardsClaimed[recipient], "Nothing to claim");
 
         uint256 toClaim = totalRewards - rewardsClaimed[recipient];
@@ -78,7 +91,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
                     DOMAIN_SEPARATOR,
                     keccak256(
                         abi.encode(
-                            keccak256("RareShopInviteRewards(address recipient,uint256 totalRewards)"),
+                            keccak256("claimRewards(address recipient,uint256 totalRewards)"),
                             recipient,
                             totalRewards
                         )
