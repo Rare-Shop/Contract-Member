@@ -48,10 +48,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
     }
 
     function setSigner(address _signer) external onlyOwner {
-        require(
-            _signer != address(0),
-            "The input parameters of the address type must not be zero address."
-        );
+        require(_signer != address(0),"invalid address");
         signer = _signer;
     }
 
@@ -77,6 +74,7 @@ contract RareShopInviteRewards is ReentrancyGuardUpgradeable,OwnableUpgradeable,
     }
 
     function withdraw(address to) external onlyOwner {
+        require(to != address(0), "invalid address");
         require(USDT_ERC20.balanceOf(address(this)) > 0, "USDT balance is 0");
 
         address payable recipient = payable(to);
