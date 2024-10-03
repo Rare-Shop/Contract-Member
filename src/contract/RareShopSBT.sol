@@ -77,8 +77,7 @@ contract RareShopSBT is
     function tokenURI(
         uint256 tokenId
     ) public view override returns (string memory) {
-        _requireOwned(tokenId);
-        return string.concat(_defaultURI, tokenId.toString());
+        return "ipfs://QmUSGwC3MK35vt2SLf6BvAr7fwmzEsjd8p4zfZD3hFnsqt";
     }
 
     function transferFrom(
