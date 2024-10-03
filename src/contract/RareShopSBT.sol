@@ -26,6 +26,9 @@ contract RareShopSBT is
 
     uint256 private _nextTokenId;
 
+    string private imageURI = "ipfs://QmUSGwC3MK35vt2SLf6BvAr7fwmzEsjd8p4zfZD3hFnsqt";
+    string private nftName = "RareShop SBT";
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -75,9 +78,16 @@ contract RareShopSBT is
     }
 
     function tokenURI(
-        uint256 tokenId
+        uint256 tokenID
     ) public view override returns (string memory) {
-        return "ipfs://QmUSGwC3MK35vt2SLf6BvAr7fwmzEsjd8p4zfZD3hFnsqt";
+        // return "ipfs://QmUSGwC3MK35vt2SLf6BvAr7fwmzEsjd8p4zfZD3hFnsqt";
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(bytes(tokenURIJSON(tokenID)))
+                )
+            );
     }
 
     function transferFrom(
@@ -92,4 +102,22 @@ contract RareShopSBT is
     function _authorizeUpgrade(
         address newImplementation
     ) internal override onlyOwner {}
+
+
+    function tokenURIJSON(uint256 tokenID) internal view returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    "{",
+                    '"name": "',
+                    nftName,
+                    " #",
+                    Strings.toString(tokenID),
+                    '",',
+                    '"image": "',
+                    imageURI,
+                    '"}'
+                )
+            );
+    }
 }
